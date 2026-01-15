@@ -1,0 +1,5 @@
+pattern	0+	5+	10+	15+	20+	25+	30+	35+	40+	45+	50+	55+	60+
+home---work	3	0	0	0	1	0	1	0	1	0	1	0	12
+work---home	3	0	0	0	2	0	1	1	0	0	1	1	4
+
+average leg duration: 3958.34375 seconds = 01:05:58

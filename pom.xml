@@ -51,6 +51,10 @@
 			<id>slimjars</id>
 			<url>https://mvn.slimjars.com</url>
 		</repository>
+		<repository>
+			<id>eth-ivt-uam</id>
+			<url>https://packagecloud.io/eth-ivt/uam/maven2</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -149,6 +153,17 @@
 			<groupId>org.matsim.contrib</groupId>
 			<artifactId>vsp</artifactId>
 			<version>${matsim.version}</version>
+		</dependency>
+		<!-- Source: https://mvnrepository.com/artifact/org.matsim.contrib/sbb-extensions -->
+		<dependency>
+			<groupId>org.matsim.contrib</groupId>
+			<artifactId>sbb-extensions</artifactId>
+			<version>${matsim.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>net.bhl.matsim</groupId>
+			<artifactId>matsim-uam</artifactId>
+			<version>5.0.0</version>
 		</dependency>
 <!--		<dependency>-->
 <!--			<groupId>org.matsim.contrib</groupId>-->

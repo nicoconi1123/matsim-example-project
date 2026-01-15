@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE config SYSTEM "http://www.matsim.org/files/dtd/config_v2.dtd">
+<config>
+	<module name="changeMode" >
+		<!-- Defines all the modes available, including chain-based modes, seperated by commas -->
+		<param name="modes" value="car,uam,walk" />
+	</module>
+	<module name="controller" >
+		<!-- Default=1000. Last Iteration of a simulation. -->
+		<param name="lastIteration" value="20" />
+		<param name="outputDirectory" value="scenarios/uam-test-scenario/output" />
+		<!-- Possible values: failIfDirectoryExists,overwriteExistingFiles,deleteDirectoryIfExists -->
+		<param name="overwriteFiles" value="deleteDirectoryIfExists" />
+		<!-- The type of routing (least cost path) algorithm used, may have the values: [Dijkstra, AStarLandmarks, SpeedyALT] -->
+		<param name="routingAlgorithmType" value="AStarLandmarks" />
+		<!-- iterationNumber % writeEventsInterval == 0 defines in which iterations events are written to a file. `0' disables events writing completely. -->
+		<param name="writeEventsInterval" value="1" />
+		<!-- iterationNumber % writePlansInterval == 0 defines (hopefully) in which iterations plans are written to a file. `0' disables plans writing completely.  Some plans in early iterations are always written -->
+		<param name="writePlansInterval" value="1" />
+	</module>
+	<module name="global" >
+		<!-- "global" number of threads.  This number is used, e.g., for replanning, but NOT in QSim.  This can typically be set to as many cores as you have available, or possibly even slightly more. -->
+		<param name="numberOfThreads" value="4" />
+	</module>
+	<module name="network" >
+		<param name="inputNetworkFile" value="uam_routed_network.xml.gz" />
+	</module>
+	<module name="plans" >
+		<param name="inputPlansFile" value="population.xml" />
+	</module>
+	<module name="qsim" >
+		<param name="endTime" value="12:00:00" />
+		<!-- [comma-separated list] Defines which modes are congested modes. Technically, these are the modes that the departure handler of the netsimengine handles.  Effective cell size, effective lane width, flow capacity factor, and storage capacity factor need to be set with diligence.  Need to be vehicular modes to make sense. -->
+		<param name="mainMode" value="access_uam_car,car,egress_uam_car" />
+		<!-- Number of threads used for the QSim.  Note that this setting is independent from the "global" threads setting.  In contrast to earlier versions, the non-parallel special version is no longer there. -->
+		<param name="numberOfThreads" value="4" />
+		<!-- snapshotStyle. One of: equiDist queue withHoles withHolesAndShowHoles kinematicWaves  -->
+		<param name="snapshotStyle" value="equiDist" />
+	</module>
+	<module name="replanning" >
+		<!-- maximum number of plans per agent.  ``0'' means ``infinity''.  Currently (2010), ``5'' is a good number -->
+		<param name="maxAgentPlanMemorySize" value="3" />
+		<parameterset type="strategysettings" >
+			<!-- strategyName of strategy.  Possible default names: SelectRandom BestScore KeepLastSelected ChangeExpBeta SelectExpBeta SelectPathSizeLogit      (selectors), ReRouteTimeAllocationMutatorTimeAllocationMutator_ReRouteChangeSingleTripModeChangeTripModeSubtourModeChoice (innovative strategies). -->
+			<param name="strategyName" value="KeepLastSelected" />
+			<!-- weight of a strategy: for each agent, a strategy will be selected with a probability proportional to its weight -->
+			<param name="weight" value="0.2" />
+		</parameterset>
+		<parameterset type="strategysettings" >
+			<param name="strategyName" value="ChangeTripMode" />
+			<param name="weight" value="0.8" />
+		</parameterset>
+	</module>
+	<module name="routing" >
+		<!-- All the modes for which the router is supposed to generate network routes (like car) -->
+		<param name="networkModes" value="car,uam" />
+		<!-- strength of the randomness for the utility of money in routing under toll.  Leads to Pareto-optimal route with randomly drawn money-vs-other-attributes tradeoff. Technically the width parameter of a log-normal distribution. 3.0 seems to be a good value.  -->
+		<param name="routingRandomness" value="0.0" />
+		<parameterset type="teleportedModeParameters" >
+			<param name="beelineDistanceFactor" value="1.0" />
+			<param name="mode" value="walk" />
+			<!-- Speed for a teleported mode. Travel time = (<beeline distance> * beelineDistanceFactor) / teleportedModeSpeed. Insert a line like this for every such mode. -->
+			<param name="teleportedModeSpeed" value="2.2" />
+		</parameterset>
+	</module>
+	<module name="scoring" >
+		<parameterset type="scoringParameters" >
+			<parameterset type="activityParams" >
+				<param name="activityType" value="dummy" />
+				<!-- typical duration of activity.  needs to be defined and non-zero.  in sec. -->
+				<param name="typicalDuration" value="02:00:00" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="car interaction" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="pt interaction" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="bike interaction" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="other interaction" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="walk interaction" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="home" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="work" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="uam_interaction" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="uam interaction" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="access_uam_walk interaction" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="egress_uam_walk interaction" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="access_uam_car interaction" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="activityParams" >
+				<param name="activityType" value="egress_uam_car interaction" />
+				<param name="scoringThisActivityAtAll" value="false" />
+				<param name="typicalDuration" value="undefined" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="car" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="pt" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="walk" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="other" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="uam" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="access_uam_walk" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="egress_uam_walk" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="access_uam_car" />
+			</parameterset>
+			<parameterset type="modeParams" >
+				<param name="mode" value="egress_uam_car" />
+			</parameterset>
+		</parameterset>
+	</module>
+	<module name="swissRailRaptor" >
+		<!-- Sets whether intermodal access and egress modes are selected by least cost (default) or randomly chosen out of the available access / egress modes. -->
+		<param name="intermodalAccessEgressModeSelection" value="CalcLeastCostModePerStop" />
+		<param name="intermodalLegOnlyHandling" value="forbid" />
+		<!-- Possible values: Default,Individual -->
+		<param name="scoringParameters" value="Default" />
+		<!-- Defines whether all potential transfers are precomputed at the beginning of the simulation (Initial) or whether they are constructed on-demand when needed (Adaptive). The former incurs potentially long up-front caclulations, but quicker routing. The latter avoids any initial computation, but may require longer routing time. -->
+		<param name="transferCalculation" value="Initial" />
+		<param name="transferPenaltyBaseCost" value="0.0" />
+		<param name="transferPenaltyCostPerTravelTimeHour" value="0.0" />
+		<param name="transferPenaltyMaxCost" value="Infinity" />
+		<param name="transferPenaltyMinCost" value="-Infinity" />
+		<!-- time deducted from transfer walk leg during transfers between pt legs in order to avoid missing a vehicle by a few seconds due to delays. -->
+		<param name="transferWalkMargin" value="5.0" />
+		<!-- If true, SwissRailRaptor tries to detect when agents cannot board a vehicle in the previous iteration because it is already full and tries to find an alternative route instead. -->
+		<param name="useCapacityConstraints" value="false" />
+		<param name="useIntermodalAccessEgress" value="false" />
+		<param name="useModeMappingForPassengers" value="false" />
+		<param name="useRangeQuery" value="false" />
+	</module>
+	<module name="uam" >
+		<!-- Comma-separated list of possible access/egress modes -->
+		<param name="accessEgressModes" value="walk" />
+		<!-- Path to the input file for UAM infrastructure and vehicles -->
+		<param name="inputFile" value="uam_vehicles.xml.gz" />
+		<!-- Selects the used routing strategy among MINTRAVELTIME, MINACCESSTRAVELTIME, MINDISTANCE, MINACCESSDISTANCE, PREDEFINED -->
+		<param name="routingStrategy" value="MINTRAVELTIME" />
+		<!-- Maximum Euclidean distance to a station (in distance units, e.g. meters); or, if dynamic search radius is used, the maximum ratio of a trip's Euclidean distance (in percent, e.g. 0.3) -->
+		<param name="searchRadius" value="9999.0" />
+		<!-- yes/no; default is no; if yes the dispatcher with charging will be used; this dispatcher charges the vehicle at the closest avaialble charger at the end of each dropoff task -->
+		<param name="useCharging" value="false" />
+		<!-- Whether or not the search radius is provided as a static radius (search radius interpreted as an absolute distance) or is being calculated dynamically for each trip (search radius interpreted as a percentage of Euclidean trip distance) -->
+		<param name="useDynamicSearchRadius" value="false" />
+		<!-- If the access/egress distance is less than this distance, walk will be the UAM access and egress mode -->
+		<param name="walkDistance" value="500.0" />
+	</module>
+
+</config>

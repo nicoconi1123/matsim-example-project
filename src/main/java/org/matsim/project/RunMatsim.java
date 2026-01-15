@@ -18,9 +18,28 @@
  * *********************************************************************** */
 package org.matsim.project;
 
+import ch.sbb.matsim.config.SwissRailRaptorConfigGroup;
+import ch.sbb.matsim.routing.pt.raptor.SwissRailRaptorModule;
+
+import com.google.common.collect.ImmutableSet;
+import net.bhl.matsim.uam.config.UAMConfigGroup;
+import net.bhl.matsim.uam.qsim.UAMQSimModule;
+import net.bhl.matsim.uam.qsim.UAMSpeedModule;
+import net.bhl.matsim.uam.run.UAMModule;
+
 import org.matsim.api.core.v01.Scenario;
+import org.matsim.api.core.v01.TransportMode;
+import org.matsim.contrib.drt.routing.DrtRoute;
+import org.matsim.contrib.drt.routing.DrtRouteFactory;
+import org.matsim.contrib.dvrp.run.DvrpConfigGroup;
+import org.matsim.contrib.dvrp.run.DvrpModule;
+import org.matsim.contrib.dvrp.run.DvrpQSimComponents;
+import org.matsim.contrib.taxi.run.MultiModeTaxiConfigGroup;
+import org.matsim.contrib.taxi.run.MultiModeTaxiModule;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
+import org.matsim.core.config.groups.QSimConfigGroup;
+import org.matsim.core.config.groups.ScoringConfigGroup;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
 import org.matsim.core.scenario.ScenarioUtils;
@@ -34,35 +53,26 @@ public class RunMatsim{
 	public static void main(String[] args) {
 
 		Config config;
-		if ( args==null || args.length==0 || args[0]==null ){
-			config = ConfigUtils.loadConfig( "scenarios/equil/config.xml" );
-		} else {
-			config = ConfigUtils.loadConfig( args );
-		}
+		config = ConfigUtils.loadConfig( "scenarios/uam-test-scenario/uam_config.xml",
+				new SwissRailRaptorConfigGroup(),
+				new UAMConfigGroup());
 
 		config.controller().setOverwriteFileSetting( OverwriteFileSetting.deleteDirectoryIfExists );
 
-		// possibly modify config here
 
-		// ---
-		
 		Scenario scenario = ScenarioUtils.loadScenario(config) ;
 
-		// possibly modify scenario here
-		
-		// ---
-		
-		Controler controler = new Controler( scenario ) ;
-		
-		// possibly modify controler here
 
-//		controler.addOverridingModule( new OTFVisLiveModule() ) ;
+		Controler controller = new Controler(scenario);
 
-//		controler.addOverridingModule( new SimWrapperModule() );
-		
-		// ---
-		
-		controler.run();
+//		controller.addOverridingModule(new DvrpModule());
+
+		controller.addOverridingModule(new SwissRailRaptorModule());
+		controller.addOverridingModule(new MultiModeTaxiModule());
+//		controller.configureQSimComponents(DvrpQSimComponents.activateModes(TransportMode.taxi));
+
+
+		controller.run();
 	}
-	
+
 }
